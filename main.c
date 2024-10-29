@@ -59,7 +59,7 @@ void displayTasks(Task tasks[], int taskCount) {
     }
 }
 
-void Modify(Task tasks[], int taskCount) {
+void ModifyTasks(Task tasks[], int taskCount) {
     int choice;
     int index;
 
@@ -117,6 +117,15 @@ void Modify(Task tasks[], int taskCount) {
     } while (choice != 6);
 }
 
+void DeleteTasks(Task tasks[],int index , int *taskCount){
+
+
+        for(int i=index;i<*taskCount-1;i++){
+            tasks[i]=tasks[i+1];
+            }
+            (*taskCount)--;
+}
+
 int main() {
     Task tasks[100];
     int taskCount = 0;
@@ -148,11 +157,23 @@ int main() {
                 if (taskCount == 0) {
                     printf("No tasks available.\n");
                 } else {
-                    Modify(tasks, taskCount);
+                    ModifyTasks(tasks, taskCount);
                 }
                 break;
             case 4:
-
+                 if (taskCount == 0) {
+                    printf("No tasks available.\n");
+                } else {
+                    int index;
+                    printf("Enter index of task you want to delete (1 To %d) : ", taskCount);
+                    scanf("%d", &index);
+                    if (index >= 1 && index <= taskCount) {
+                        DeleteTasks(tasks, index - 1, &taskCount);
+                        printf("Task Deleted Succesfully !!.\n");
+                    } else {
+                        printf("Index invalide.\n");
+                    }
+                }
                 break;
             case 5:
 
