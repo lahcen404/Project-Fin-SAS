@@ -53,8 +53,8 @@ void displayTasks(Task tasks[], int taskCount) {
         printf("Title: %s\n", tasks[i].title);
         printf("Description: %s\n", tasks[i].description);
         printf("Deadline: %s/%s/%s\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
-        printf("Priority: %s\n", tasks[i].priority ? "High" : "Low");
-        printf("Status: %s\n", tasks[i].status ? "Complete" : "Incomplete");
+        printf("Priority: %s\n", tasks[i].priority ? "High" : " Low");
+        printf("Status: %s\n", tasks[i].status ? "Complete" : " Incomplete");
         printf("--------------------------\n");
     }
 }
