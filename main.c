@@ -129,11 +129,11 @@ void DeleteTasks(Task tasks[],int index , int *taskCount){
 }
 
 
-void filterByPriority(Task tasks[], int taskCount, int desiredPriority) {
+void filterByPriority(Task tasks[], int taskCount, int WPriority ) { //WPriority helps the function know what type of tasks
     int found = 0;
 
     for (int i = 0; i < taskCount; i++) {
-        if (tasks[i].priority == desiredPriority) {
+        if (tasks[i].priority == WPriority) {
             found = 1;
             printf("    ------------- Task %d ------------\n", i + 1);
             printf("     Title: %s\n", tasks[i].title);
@@ -151,12 +151,36 @@ void filterByPriority(Task tasks[], int taskCount, int desiredPriority) {
 }
 
 
+void filterByStatus(Task tasks[], int taskCount, int WStatus ) { //WPriority helps the function know what type of tasks
+    int found = 0;
+
+    for (int i = 0; i < taskCount; i++) {
+        if (tasks[i].status == WStatus) {
+            found = 1;
+            printf("    ------------- Task %d ------------\n", i + 1);
+            printf("     Title: %s\n", tasks[i].title);
+            printf("     Description: %s\n", tasks[i].description);
+            printf("     Deadline: %s/%s/%s\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
+            printf("     Priority: %s\n", tasks[i].priority ? "High" : "Low");
+            printf("     Status: %s\n", tasks[i].status ? "Complete" : "Incomplete");
+            printf("    -----------------------------------\n");
+        }
+    }
+
+    if (!found) {
+        printf("\n    No tasks found with the specified status.\n");
+    }
+}
+
+
 
 int main() {
     Task tasks[100];
     int taskCount = 0;
     int doo;
     int priority;
+    int status;
+    int typeFilter;
 
     do {
         printf("\n         What do you want to do?\n");
@@ -192,11 +216,13 @@ int main() {
                     printf("\n    No tasks available.\n");
                 } else {
                     int index;
+                    printf("\n    Enter 0 for Quit Deleting");
                     printf("\n    Enter index of task you want to delete (1 To %d) : ", taskCount);
                     scanf("%d", &index);
                     if (index >= 1 && index <= taskCount) {
                         DeleteTasks(tasks, index - 1, &taskCount);
                         printf("    Task Deleted Succesfully !!\n");
+
                     } else {
                         printf("    Index invalide.\n");
                     }
@@ -206,6 +232,11 @@ int main() {
             case 5:
 
 
+                printf("\n 1- Filter by Priority \n");
+                printf("\n 2- Filter by Status \n");
+                scanf("%d", &typeFilter);
+
+            if(typeFilter==1){
 
                 printf("\n    Enter priority to filter by (0 for Low, 1 for High): ");
                 scanf("%d", &priority);
@@ -215,6 +246,20 @@ int main() {
                 } else {
                     filterByPriority(tasks, taskCount, priority);
                 }
+            }
+                else if (typeFilter==2){
+
+                    printf("\n    Enter status to filter by (0 for Incomplete, 1 for Complete): ");
+                scanf("%d", &status);
+
+                if (status < 0 || status > 1) {
+                    printf("\n    Invalid Status \n");
+                } else {
+                    filterByStatus(tasks, taskCount, status);
+                }
+
+                }
+
 
                 break;
             case 6:
