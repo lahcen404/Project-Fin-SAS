@@ -4,7 +4,7 @@
 typedef struct { // structure deadline
     char day[3];
     char month[3];
-    char year[5];
+    char year[4];
 } Deadline;
 
 typedef struct { // structure task
@@ -15,10 +15,10 @@ typedef struct { // structure task
     int status;
 } Task;
 
-int addTask(Task tasks[], int taskCount) {
-    if (taskCount >= 100) {
+void addTask(Task tasks[], int *taskCount) {
+    if (*taskCount >= 100) {
         printf("\n    Task limit reached.\n");
-        return taskCount;
+        return;
     }
 
     Task newTask;
@@ -43,9 +43,8 @@ int addTask(Task tasks[], int taskCount) {
 
     newTask.status = 0;
 
-    tasks[taskCount] = newTask;
-    taskCount++;
-    return taskCount;
+    tasks[*taskCount] = newTask;
+    (*taskCount)++;
 }
 
 void displayTasks(Task tasks[], int taskCount) {
@@ -61,6 +60,7 @@ void displayTasks(Task tasks[], int taskCount) {
 }
 
 void ModifyTasks(Task tasks[], int taskCount) {
+    
     int choice;
     int index;
 
@@ -118,15 +118,19 @@ void ModifyTasks(Task tasks[], int taskCount) {
     } while (choice != 6);
 }
 
-int DeleteTasks(Task tasks[], int index, int taskCount) {
-    for (int i = index; i < taskCount - 1; i++) {
-        tasks[i] = tasks[i + 1];
-    }
-    taskCount--;
-    return taskCount;
+
+
+void DeleteTasks(Task tasks[],int index , int *taskCount){
+
+
+        for(int i=index;i<*taskCount-1;i++){
+            tasks[i]=tasks[i+1];
+            }
+            (*taskCount)--;
 }
 
-void filterByPriority(Task tasks[], int taskCount, int WPriority) {
+
+void filterByPriority(Task tasks[], int taskCount, int WPriority ) { //WPriority helps the function know what type of tasks
     int found = 0;
 
     for (int i = 0; i < taskCount; i++) {
@@ -147,7 +151,8 @@ void filterByPriority(Task tasks[], int taskCount, int WPriority) {
     }
 }
 
-void filterByStatus(Task tasks[], int taskCount, int WStatus) {
+
+void filterByStatus(Task tasks[], int taskCount, int WStatus ) { //WPriority helps the function know what type of tasks
     int found = 0;
 
     for (int i = 0; i < taskCount; i++) {
@@ -168,8 +173,11 @@ void filterByStatus(Task tasks[], int taskCount, int WStatus) {
     }
 }
 
+
+
 int main() {
-    printf("\n  ----------- _ OneHand _ -----------  \n ");
+
+     printf("\n  ----------- _OneHand_ -----------  \n ");
     Task tasks[100];
     int taskCount = 0;
     int doo;
@@ -184,13 +192,13 @@ int main() {
         printf("    3- Modify Task\n");
         printf("    4- Delete Task\n");
         printf("    5- Filter Task\n");
-        printf("    5- Sort Task\n");
+        printf("    6- Sort Task\n");
         printf("    7- Quit\n");
         scanf("%d", &doo);
 
         switch (doo) {
             case 1:
-                taskCount = addTask(tasks, taskCount);
+                addTask(tasks, &taskCount);
                 break;
             case 2:
                 if (taskCount == 0) {
@@ -207,55 +215,64 @@ int main() {
                 }
                 break;
             case 4:
-                if (taskCount == 0) {
+                 if (taskCount == 0) {
                     printf("\n    No tasks available.\n");
                 } else {
                     int index;
+                    printf("\n    Enter 0 for Quit Deleting");
                     printf("\n    Enter index of task you want to delete (1 To %d) : ", taskCount);
                     scanf("%d", &index);
                     if (index >= 1 && index <= taskCount) {
-                        taskCount = DeleteTasks(tasks, index - 1, taskCount);
-                        printf("    Task Deleted Successfully !!\n");
+                        DeleteTasks(tasks, index - 1, &taskCount);
+                        printf("    Task Deleted Succesfully !!\n");
+
                     } else {
-                        printf("    Invalid index.\n");
+                        printf("    Index invalide.\n");
                     }
                 }
                 break;
-            case 5:
-                if (taskCount == 0) {
-                    printf("\n    No tasks available.\n");
-                } else {
-                    printf("\n -  Filter by : \n");
-                    printf("\n 1-  Priority \n");
-                    printf(" 2-  Status \n");
-                    scanf("%d", &typeFilter);
 
-                    if (typeFilter == 1) {
-                        printf("\n    Enter priority to filter by (0 for Low, 1 for High): ");
-                        scanf("%d", &priority);
-                        if (priority < 0 || priority > 1) {
-                            printf("\n    Invalid priority.\n");
-                        } else {
-                            filterByPriority(tasks, taskCount, priority);
-                        }
-                    } else if (typeFilter == 2) {
-                        printf("\n    Enter status to filter by (0 for Incomplete, 1 for Complete): ");
-                        scanf("%d", &status);
-                        if (status < 0 || status > 1) {
-                            printf("\n    Invalid status.\n");
-                        } else {
-                            filterByStatus(tasks, taskCount, status);
-                        }
-                    } else {
-                        printf("    Invalid choice.\n");
-                    }
+            case 5:
+
+
+                printf("\n 1- Filter by Priority \n");
+                printf("\n 2- Filter by Status \n");
+                scanf("%d", &typeFilter);
+
+            if(typeFilter==1){
+
+                printf("\n    Enter priority to filter by (0 for Low, 1 for High): ");
+                scanf("%d", &priority);
+
+                if (priority < 0 || priority > 1) {
+                    printf("\n    Invalid priority \n");
+                } else {
+                    filterByPriority(tasks, taskCount, priority);
                 }
+            }
+                else if (typeFilter==2){
+
+                    printf("\n    Enter status to filter by (0 for Incomplete, 1 for Complete): ");
+                scanf("%d", &status);
+
+                if (status < 0 || status > 1) {
+                    printf("\n    Invalid Status \n");
+                } else {
+                    filterByStatus(tasks, taskCount, status);
+                }
+
+                }
+
+
+                break;
+            case 6:
+
                 break;
             case 7:
-                printf("\n    Exiting program...\n");
+                printf("\n    ------- Goodbye! ------ \n");
                 break;
             default:
-                printf("    Invalid choice. Please try again.\n");
+                printf(" \n   Invalid choice, please try again.\n");
         }
     } while (doo != 7);
 
