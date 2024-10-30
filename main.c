@@ -1,19 +1,28 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
-typedef struct { // structure deadline
+// structure deadline
+typedef struct { 
     char day[3];
     char month[3];
     char year[5];
 } Deadline;
 
-typedef struct { // structure task
+// structure task
+typedef struct { 
     char title[50];
     char description[200];
     Deadline deadline;
     int priority;
     int status;
 } Task;
+
+// Function to check if the date is valid 
+ int isValidDate(int day, int month, int year) {
+    return (month >= 1 && month <= 12) && (day >= 1 && day <= 31) && (year >= 2024); // Valid MONTH DAY YEAR
+}
+
 
 int addTask(Task tasks[], int taskCount) {
     if (taskCount >= 100) {
@@ -35,8 +44,11 @@ int addTask(Task tasks[], int taskCount) {
     printf("     Enter deadline (Month): ");
     scanf(" %[^\n]", newTask.deadline.month);
 
+
     printf("     Enter deadline (Year): ");
     scanf(" %[^\n]", newTask.deadline.year);
+
+    
 
     printf("     Enter priority (0 for low, 1 for high): ");
     scanf("%d", &newTask.priority);
@@ -63,6 +75,7 @@ void displayTasks(Task tasks[], int taskCount) {
 void ModifyTasks(Task tasks[], int taskCount) {
     int choice;
     int index;
+    int isFutureDate = 0;
 
     printf("\n    Enter the task number you want to modify (1 to %d): ", taskCount);
     scanf("%d", &index);
@@ -100,6 +113,9 @@ void ModifyTasks(Task tasks[], int taskCount) {
                 scanf("%s", tasks[index].deadline.month);
                 printf("    New deadline (Year): ");
                 scanf("%s", tasks[index].deadline.year);
+
+                 
+
                 break;
             case 4:
                 printf("    New Priority (0 for Low | 1 for High): ");
@@ -168,6 +184,23 @@ void filterByStatus(Task tasks[], int taskCount, int WStatus) {
     }
 }
 
+void saveTasksToFile(Task tasks[], int taskCount) {
+    FILE *file = fopen("tasks.txt", "w"); 
+
+
+    for (int i = 0; i < taskCount; i++) {
+        fprintf(file, "Title: %s\n", tasks[i].title);
+        fprintf(file, "Description: %s\n", tasks[i].description);
+        fprintf(file, "Deadline: %s/%s/%s\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
+        fprintf(file, "Priority: %s\n", tasks[i].priority ? "High" : "Low");
+        fprintf(file, "Status: %s\n", tasks[i].status ? "Complete" : "Incomplete");
+        fprintf(file, "-----------------------------------\n");
+    }
+
+    fclose(file); 
+    printf("Tasks saved Successfully !!\n");
+}
+
 int main() {
     printf("\n  ----------- _ OneHand _ -----------  \n ");
     Task tasks[100];
@@ -184,13 +217,14 @@ int main() {
         printf("    3- Modify Task\n");
         printf("    4- Delete Task\n");
         printf("    5- Filter Task\n");
-        printf("    5- Sort Task\n");
+        printf("    6- Save Tasks in File.txt \n");
         printf("    7- Quit\n");
         scanf("%d", &doo);
 
         switch (doo) {
             case 1:
                 taskCount = addTask(tasks, taskCount);
+                saveTasksToFile(tasks, taskCount);
                 break;
             case 2:
                 if (taskCount == 0) {
@@ -204,6 +238,7 @@ int main() {
                     printf("\n    No tasks available.\n");
                 } else {
                     ModifyTasks(tasks, taskCount);
+                    saveTasksToFile(tasks, taskCount);
                 }
                 break;
             case 4:
@@ -215,7 +250,8 @@ int main() {
                     scanf("%d", &index);
                     if (index >= 1 && index <= taskCount) {
                         taskCount = DeleteTasks(tasks, index - 1, taskCount);
-                        printf("    Task Deleted Successfully !!\n");
+                        saveTasksToFile(tasks, taskCount);
+                        printf("    Task Deleted Successfully !! \n");
                     } else {
                         printf("    Invalid index.\n");
                     }
@@ -251,8 +287,14 @@ int main() {
                     }
                 }
                 break;
+
+                 case 6:
+                saveTasksToFile(tasks, taskCount);
+                printf("Tasks saved to file.\n");
+                break;
+                
             case 7:
-                printf("\n    Exiting program...\n");
+                printf("\n    Good Bye!!!\n");
                 break;
             default:
                 printf("    Invalid choice. Please try again.\n");
