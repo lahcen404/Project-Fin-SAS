@@ -16,14 +16,14 @@ typedef struct {
     int priority;
     int status;
 } Task;
-
+// Function add task
 int addTask(Task tasks[], int taskCount) {
-    if (taskCount >= 100) {
+    if (taskCount >= 100) {   // Check if task limit is reached
         printf("\n    Task limit reached.\n");
-        return taskCount;
+        return taskCount;   // Return current task count
     }
 
-    Task newTask;
+    Task newTask;   // Create a new task variable
 
     printf("     Enter task title: ");
     scanf(" %[^\n]", &newTask.title);
@@ -64,13 +64,13 @@ int addTask(Task tasks[], int taskCount) {
     printf("     Enter priority (0 for low, 1 for high): ");
     scanf("%d", &newTask.priority);
 
-    newTask.status = 0;
+    newTask.status = 0; // Initialize status to 0 = incomplete
 
-    tasks[taskCount] = newTask;
-    taskCount++;
-    return taskCount;
+    tasks[taskCount] = newTask;  // Add the new task to the tasks array
+    taskCount++; //Increment
+    return taskCount;  // Return updated task count
 }
-
+// function Display task
 void displayTasks(Task tasks[], int taskCount) {
     for (int i = 0; i < taskCount; i++) {
         printf("    ------------- Task %d ------------\n", i + 1);
@@ -83,6 +83,7 @@ void displayTasks(Task tasks[], int taskCount) {
     }
 }
 
+// Function Modify task
 void ModifyTasks(Task tasks[], int taskCount) {
     int choice;
     int index;
@@ -90,8 +91,8 @@ void ModifyTasks(Task tasks[], int taskCount) {
     printf("\n    Enter the task number you want to modify (1 to %d): ", taskCount);
     scanf("%d", &index);
 
-    index--;
-    if (index < 0 || index >= taskCount) {
+    index--; // Convert to 0 based index
+    if (index < 0 || index >= taskCount) { // Check if index is valid
         printf("\n    Invalid task number!\n");
         return;
     }
@@ -107,6 +108,7 @@ void ModifyTasks(Task tasks[], int taskCount) {
         printf("    Enter your choice: ");
         scanf("%d", &choice);
 
+// Switch case to handle modification options
         switch (choice) {
             case 1:
                 printf("    New title: ");
@@ -121,6 +123,7 @@ void ModifyTasks(Task tasks[], int taskCount) {
         printf("     New deadline (Day): ");
         scanf("%d", &tasks[index].deadline.day);
 
+            //Check valid Day
         if (tasks[index].deadline.day < 1 || tasks[index].deadline.day > 31) {
             printf("     Invalid day. Enter a valid day (1-31)\n");
         }
@@ -130,7 +133,7 @@ void ModifyTasks(Task tasks[], int taskCount) {
     do {
         printf("     New deadline (Month): ");
         scanf("%d", &tasks[index].deadline.month);
-
+            //Check valid Month
         if (tasks[index].deadline.month < 1 || tasks[index].deadline.month > 12) {
             printf("     Invalid month. Enter a valid month (1-12)\n");
         }
@@ -140,11 +143,11 @@ void ModifyTasks(Task tasks[], int taskCount) {
     do {
         printf("     New deadline (Year): ");
         scanf("%d", &tasks[index].deadline.year);
-
+            //Check valid Year
         if (tasks[index].deadline.year < 2024) {
             printf("     Invalid year. Enter a year bigger from 2024 \n");
         }
-    } while (tasks[index].deadline.year < 2024);
+    } while (tasks[index].deadline.year < 2024); //Repeated loop as long as the years less than 2024
                 break;
             case 4:
                 printf("    New Priority (0 for Low | 1 for High): ");
@@ -163,6 +166,7 @@ void ModifyTasks(Task tasks[], int taskCount) {
     } while (choice != 6);
 }
 
+// Function Delete task
 int DeleteTasks(Task tasks[], int index, int taskCount) {
     for (int i = index; i < taskCount - 1; i++) {
         tasks[i] = tasks[i + 1];
@@ -171,6 +175,7 @@ int DeleteTasks(Task tasks[], int index, int taskCount) {
     return taskCount;
 }
 
+// Function Filter by priority 
 void filterByPriority(Task tasks[], int taskCount, int WPriority) {
     int found = 0;
 
@@ -192,6 +197,7 @@ void filterByPriority(Task tasks[], int taskCount, int WPriority) {
     }
 }
 
+// Function Filter by status 
 void filterByStatus(Task tasks[], int taskCount, int WStatus) {
     int found = 0;
 
@@ -213,10 +219,12 @@ void filterByStatus(Task tasks[], int taskCount, int WStatus) {
     }
 }
 
+// Function Save Tasks to file.txt
 void saveTasksToFile(Task tasks[], int taskCount) {
-    FILE *file = fopen("tasks.txt", "w"); 
+    FILE *file = fopen("Tasks.txt", "w"); 
 
     for (int i = 0; i < taskCount; i++) {
+        fprintf(file, "---------------Task %d-------------\n",i+1);
         fprintf(file, "Title: %s\n", tasks[i].title);
         fprintf(file, "Description: %s\n", tasks[i].description);
         fprintf(file, "Deadline: %02d/%02d/%d\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
@@ -241,6 +249,8 @@ int main() {
     int typeFilter;
 
     do {
+        //Menu
+
         printf("\n         What do you want to do?\n");
         printf("\n    1- Add Task\n");
         printf("    2- Display Task\n");
@@ -253,22 +263,23 @@ int main() {
 
         switch (doo) {
             case 1:
-                taskCount = addTask(tasks, taskCount);
-                saveTasksToFile(tasks, taskCount);
+                taskCount = addTask(tasks, taskCount); //Call AddTask Function
+
                 break;
             case 2:
                 if (taskCount == 0) {
                     printf("    No tasks available.\n");
                 } else {
-                    displayTasks(tasks, taskCount);
+                    displayTasks(tasks, taskCount); //Call DisplayTask Function
+
                 }
                 break;
             case 3:
                 if (taskCount == 0) {
-                    printf("    No tasks available.\n");
+                    printf("    No tasks available.\n"); 
                 } else {
-                    ModifyTasks(tasks, taskCount);
-                    saveTasksToFile(tasks, taskCount);
+                    ModifyTasks(tasks, taskCount); //Call ModifyTask Function
+                    
                 }
                 break;
             case 4:
@@ -282,8 +293,8 @@ int main() {
                     if (index < 0 || index >= taskCount) {
                         printf("\n    Invalid task number!\n");
                     } else {
-                        taskCount = DeleteTasks(tasks, index, taskCount);
-                        saveTasksToFile(tasks, taskCount);
+                        taskCount = DeleteTasks(tasks, index, taskCount); //Call DeleteTask Function
+                        
                         printf("    Task deleted successfully.\n");
                     }
                 }
@@ -300,18 +311,22 @@ int main() {
                     if (typeFilter == 1) {
                         printf("\n    Enter priority level (0 for Low | 1 for High): ");
                         scanf("%d", &priority);
-                        filterByPriority(tasks, taskCount, priority);
+                        filterByPriority(tasks, taskCount, priority); //Call FilterByPriority function
                     } else if (typeFilter == 2) {
                         printf("\n    Enter status level (0 for Incomplete | 1 for Complete): ");
                         scanf("%d", &status);
-                        filterByStatus(tasks, taskCount, status);
+                        filterByStatus(tasks, taskCount, status); //Call FilterByStatus function
                     } else {
                         printf("    Invalid filter type.\n");
                     }
                 }
                 break;
             case 6:
-                saveTasksToFile(tasks, taskCount);
+            if (taskCount == 0) {
+                    printf("    No tasks available.\n");
+                } else {
+                saveTasksToFile(tasks, taskCount);  //Call Save tasks to file function
+                }
                 break;
             case 7:
                 printf("\n    Good Bye!!! \n");
