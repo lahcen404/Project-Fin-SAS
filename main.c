@@ -1,12 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 // structure deadline
 typedef struct { 
-    char day[3];
-    char month[3];
-    char year[5];
+    int day;
+    int month;
+    int year;
 } Deadline;
 
 // structure task
@@ -18,12 +17,6 @@ typedef struct {
     int status;
 } Task;
 
-// Function to check if the date is valid 
- int isValidDate(int day, int month, int year) {
-    return (month >= 1 && month <= 12) && (day >= 1 && day <= 31) && (year >= 2024); // Valid MONTH DAY YEAR
-}
-
-
 int addTask(Task tasks[], int taskCount) {
     if (taskCount >= 100) {
         printf("\n    Task limit reached.\n");
@@ -33,22 +26,40 @@ int addTask(Task tasks[], int taskCount) {
     Task newTask;
 
     printf("     Enter task title: ");
-    scanf(" %[^\n]", newTask.title);
+    scanf(" %[^\n]", &newTask.title);
 
     printf("     Enter task description: ");
-    scanf(" %[^\n]", newTask.description);
+    scanf(" %[^\n]", &newTask.description);
 
-    printf("     Enter deadline (Day): ");
-    scanf(" %[^\n]", newTask.deadline.day);
+    // Input valid day
+    do {
+        printf("     Enter deadline (Day): ");
+        scanf("%d", &newTask.deadline.day);
 
-    printf("     Enter deadline (Month): ");
-    scanf(" %[^\n]", newTask.deadline.month);
+        if (newTask.deadline.day < 1 || newTask.deadline.day > 31) {
+            printf("     Invalid day. Enter a valid day (1-31).\n");
+        }
+    } while (newTask.deadline.day < 1 || newTask.deadline.day > 31);
 
+    // Input valid month
+    do {
+        printf("     Enter deadline (Month): ");
+        scanf("%d", &newTask.deadline.month);
 
-    printf("     Enter deadline (Year): ");
-    scanf(" %[^\n]", newTask.deadline.year);
+        if (newTask.deadline.month < 1 || newTask.deadline.month > 12) {
+            printf("     Invalid month. Enter a valid month (1-12).\n");
+        }
+    } while (newTask.deadline.month < 1 || newTask.deadline.month > 12);
 
-    
+    // Input valid year
+    do {
+        printf("     Enter deadline (Year): ");
+        scanf("%d", &newTask.deadline.year);
+
+        if (newTask.deadline.year < 2024) {
+            printf("     Invalid year. Enter a year bigger from 2024 \n");
+        }
+    } while (newTask.deadline.year < 2024);
 
     printf("     Enter priority (0 for low, 1 for high): ");
     scanf("%d", &newTask.priority);
@@ -65,9 +76,9 @@ void displayTasks(Task tasks[], int taskCount) {
         printf("    ------------- Task %d ------------\n", i + 1);
         printf("     Title: %s\n", tasks[i].title);
         printf("     Description: %s\n", tasks[i].description);
-        printf("     Deadline: %s/%s/%s\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
-        printf("     Priority: %s\n", tasks[i].priority ? "High" : " Low");
-        printf("     Status: %s\n", tasks[i].status ? "Complete" : " Incomplete");
+        printf("     Deadline: %02d/%02d/%d\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
+        printf("     Priority: %s\n", tasks[i].priority ? "High" : "Low");
+        printf("     Status: %s\n", tasks[i].status ? "Complete" : "Incomplete");
         printf("    -----------------------------------\n");
     }
 }
@@ -75,7 +86,6 @@ void displayTasks(Task tasks[], int taskCount) {
 void ModifyTasks(Task tasks[], int taskCount) {
     int choice;
     int index;
-    int isFutureDate = 0;
 
     printf("\n    Enter the task number you want to modify (1 to %d): ", taskCount);
     scanf("%d", &index);
@@ -100,22 +110,41 @@ void ModifyTasks(Task tasks[], int taskCount) {
         switch (choice) {
             case 1:
                 printf("    New title: ");
-                scanf(" %[^\n]", tasks[index].title);
+                scanf(" %[^\n]", &tasks[index].title);
                 break;
             case 2:
                 printf("    New description: ");
-                scanf(" %[^\n]", tasks[index].description);
+                scanf(" %[^\n]", &tasks[index].description);
                 break;
             case 3:
-                printf("    New deadline (Day): ");
-                scanf("%s", tasks[index].deadline.day);
-                printf("    New deadline (Month): ");
-                scanf("%s", tasks[index].deadline.month);
-                printf("    New deadline (Year): ");
-                scanf("%s", tasks[index].deadline.year);
+                do {
+        printf("     New deadline (Day): ");
+        scanf("%d", &tasks[index].deadline.day);
 
-                 
+        if (tasks[index].deadline.day < 1 || tasks[index].deadline.day > 31) {
+            printf("     Invalid day. Enter a valid day (1-31)\n");
+        }
+    } while (tasks[index].deadline.day < 1 || tasks[index].deadline.day > 31);
 
+    
+    do {
+        printf("     New deadline (Month): ");
+        scanf("%d", &tasks[index].deadline.month);
+
+        if (tasks[index].deadline.month < 1 || tasks[index].deadline.month > 12) {
+            printf("     Invalid month. Enter a valid month (1-12)\n");
+        }
+    } while (tasks[index].deadline.month < 1 || tasks[index].deadline.month > 12);
+
+    
+    do {
+        printf("     New deadline (Year): ");
+        scanf("%d", &tasks[index].deadline.year);
+
+        if (tasks[index].deadline.year < 2024) {
+            printf("     Invalid year. Enter a year bigger from 2024 \n");
+        }
+    } while (tasks[index].deadline.year < 2024);
                 break;
             case 4:
                 printf("    New Priority (0 for Low | 1 for High): ");
@@ -151,7 +180,7 @@ void filterByPriority(Task tasks[], int taskCount, int WPriority) {
             printf("    ------------- Task %d ------------\n", i + 1);
             printf("     Title: %s\n", tasks[i].title);
             printf("     Description: %s\n", tasks[i].description);
-            printf("     Deadline: %s/%s/%s\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
+            printf("     Deadline: %02d/%02d/%d\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
             printf("     Priority: %s\n", tasks[i].priority ? "High" : "Low");
             printf("     Status: %s\n", tasks[i].status ? "Complete" : "Incomplete");
             printf("    -----------------------------------\n");
@@ -172,7 +201,7 @@ void filterByStatus(Task tasks[], int taskCount, int WStatus) {
             printf("    ------------- Task %d ------------\n", i + 1);
             printf("     Title: %s\n", tasks[i].title);
             printf("     Description: %s\n", tasks[i].description);
-            printf("     Deadline: %s/%s/%s\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
+            printf("     Deadline: %02d/%02d/%d\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
             printf("     Priority: %s\n", tasks[i].priority ? "High" : "Low");
             printf("     Status: %s\n", tasks[i].status ? "Complete" : "Incomplete");
             printf("    -----------------------------------\n");
@@ -187,11 +216,10 @@ void filterByStatus(Task tasks[], int taskCount, int WStatus) {
 void saveTasksToFile(Task tasks[], int taskCount) {
     FILE *file = fopen("tasks.txt", "w"); 
 
-
     for (int i = 0; i < taskCount; i++) {
         fprintf(file, "Title: %s\n", tasks[i].title);
         fprintf(file, "Description: %s\n", tasks[i].description);
-        fprintf(file, "Deadline: %s/%s/%s\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
+        fprintf(file, "Deadline: %02d/%02d/%d\n", tasks[i].deadline.day, tasks[i].deadline.month, tasks[i].deadline.year);
         fprintf(file, "Priority: %s\n", tasks[i].priority ? "High" : "Low");
         fprintf(file, "Status: %s\n", tasks[i].status ? "Complete" : "Incomplete");
         fprintf(file, "-----------------------------------\n");
@@ -202,7 +230,9 @@ void saveTasksToFile(Task tasks[], int taskCount) {
 }
 
 int main() {
-    printf("\n  ----------- _ OneHand _ -----------  \n ");
+    printf("\n  -----------------------------------  \n ");
+    printf("\n  ----------- * OneHand * -----------  \n ");
+    printf("\n  -----------------------------------  \n ");
     Task tasks[100];
     int taskCount = 0;
     int doo;
@@ -235,7 +265,7 @@ int main() {
                 break;
             case 3:
                 if (taskCount == 0) {
-                    printf("\n    No tasks available.\n");
+                    printf("    No tasks available.\n");
                 } else {
                     ModifyTasks(tasks, taskCount);
                     saveTasksToFile(tasks, taskCount);
@@ -243,61 +273,51 @@ int main() {
                 break;
             case 4:
                 if (taskCount == 0) {
-                    printf("\n    No tasks available.\n");
+                    printf("    No tasks available.\n");
                 } else {
                     int index;
-                    printf("\n    Enter index of task you want to delete (1 To %d) : ", taskCount);
+                    printf("\n    Enter the task number to delete (1 to %d): ", taskCount);
                     scanf("%d", &index);
-                    if (index >= 1 && index <= taskCount) {
-                        taskCount = DeleteTasks(tasks, index - 1, taskCount);
-                        saveTasksToFile(tasks, taskCount);
-                        printf("    Task Deleted Successfully !! \n");
+                    index--;
+                    if (index < 0 || index >= taskCount) {
+                        printf("\n    Invalid task number!\n");
                     } else {
-                        printf("    Invalid index.\n");
+                        taskCount = DeleteTasks(tasks, index, taskCount);
+                        saveTasksToFile(tasks, taskCount);
+                        printf("    Task deleted successfully.\n");
                     }
                 }
                 break;
             case 5:
                 if (taskCount == 0) {
-                    printf("\n    No tasks available.\n");
+                    printf("    No tasks available.\n");
                 } else {
-                    printf("\n -  Filter by : \n");
-                    printf("\n 1-  Priority \n");
-                    printf(" 2-  Status \n");
+                    printf("\n    1- Filter by priority\n");
+                    printf("    2- Filter by status\n");
+                    printf("    Enter your choice: ");
                     scanf("%d", &typeFilter);
 
                     if (typeFilter == 1) {
-                        printf("\n    Enter priority to filter by (0 for Low, 1 for High): ");
+                        printf("\n    Enter priority level (0 for Low | 1 for High): ");
                         scanf("%d", &priority);
-                        if (priority < 0 || priority > 1) {
-                            printf("\n    Invalid priority.\n");
-                        } else {
-                            filterByPriority(tasks, taskCount, priority);
-                        }
+                        filterByPriority(tasks, taskCount, priority);
                     } else if (typeFilter == 2) {
-                        printf("\n    Enter status to filter by (0 for Incomplete, 1 for Complete): ");
+                        printf("\n    Enter status level (0 for Incomplete | 1 for Complete): ");
                         scanf("%d", &status);
-                        if (status < 0 || status > 1) {
-                            printf("\n    Invalid status.\n");
-                        } else {
-                            filterByStatus(tasks, taskCount, status);
-                        }
+                        filterByStatus(tasks, taskCount, status);
                     } else {
-                        printf("    Invalid choice.\n");
+                        printf("    Invalid filter type.\n");
                     }
                 }
                 break;
-
-                 case 6:
+            case 6:
                 saveTasksToFile(tasks, taskCount);
-                printf("Tasks saved to file.\n");
                 break;
-                
             case 7:
-                printf("\n    Good Bye!!!\n");
+                printf("\n    Good Bye!!! \n");
                 break;
             default:
-                printf("    Invalid choice. Please try again.\n");
+                printf("\n    Invalid choice, please try again.\n");
         }
     } while (doo != 7);
 
