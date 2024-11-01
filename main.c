@@ -109,6 +109,7 @@ void ModifyTasks(Task tasks[], int taskCount) {
         scanf("%d", &choice);
 
 // Switch case to handle modification options
+
         switch (choice) {
             case 1:
                 printf("    New title: ");
@@ -237,6 +238,57 @@ void saveTasksToFile(Task tasks[], int taskCount) {
     printf("Tasks saved Successfully !!\n");
 }
 
+void SortByAscendingDate(Task tasks[], int taskCount)
+{
+    for (int i = 0; i < taskCount; i++)           //sorting tasks (ascending)
+    {
+        int indexMin = i; // 0
+        for (int j = i + 1; j < taskCount; j++) // 2
+        {
+            if (tasks[indexMin].deadline.year > tasks[j].deadline.year ||
+                tasks[indexMin].deadline.year == tasks[j].deadline.year && 
+                tasks[indexMin].deadline.month > tasks[j].deadline.month ||
+                tasks[indexMin].deadline.month == tasks[j].deadline.month && 
+                tasks[indexMin].deadline.day > tasks[j].deadline.day)
+            {
+                indexMin = j;
+            } 
+            Task temp = tasks[indexMin];
+            tasks[indexMin] = tasks[i];
+            tasks[i] = temp;
+        }
+    }
+
+    printf("Tasks ordered by ascending date\n");
+    printf("--------------------------------------------\n");
+}
+
+
+void SortByDescendingDate(Task tasks[], int taskCount)
+{
+    for (int i = 0; i < taskCount; i++)           //sorting tasks (Descending)
+    {
+        int indexMin = i; 
+        for (int j = i + 1; j < taskCount; j++) 
+        {
+            if (tasks[indexMin].deadline.year < tasks[j].deadline.year ||
+                tasks[indexMin].deadline.year == tasks[j].deadline.year && 
+                tasks[indexMin].deadline.month < tasks[j].deadline.month ||
+                tasks[indexMin].deadline.month == tasks[j].deadline.month && 
+                tasks[indexMin].deadline.day < tasks[j].deadline.day)
+            {
+                indexMin = j;
+            } 
+            Task temp = tasks[indexMin];
+            tasks[indexMin] = tasks[i];
+            tasks[i] = temp;
+        }
+    }
+
+    printf("Tasks ordered by ascending date\n");
+    printf("--------------------------------------------\n");
+}
+
 int main() {
     printf("\n  -----------------------------------  \n ");
     printf("\n  ----------- * OneHand * -----------  \n ");
@@ -258,7 +310,9 @@ int main() {
         printf("    4- Delete Task\n");
         printf("    5- Filter Task\n");
         printf("    6- Save Tasks in File.txt \n");
-        printf("    7- Quit\n");
+        printf("    7- Sort By Ascending Deadline \n");
+        printf("    8- Sort By Descending Deadline \n");
+        printf("    9- Quit\n");
         scanf("%d", &doo);
 
         switch (doo) {
@@ -287,6 +341,7 @@ int main() {
                     printf("    No tasks available.\n");
                 } else {
                     int index;
+                    printf("    Entre 0 to cancel deleting \n");
                     printf("\n    Enter the task number to delete (1 to %d): ", taskCount);
                     scanf("%d", &index);
                     index--;
@@ -328,13 +383,33 @@ int main() {
                 saveTasksToFile(tasks, taskCount);  //Call Save tasks to file function
                 }
                 break;
+
             case 7:
+                if (taskCount == 0) {
+                    printf("    No tasks available.\n");
+                } else {
+                SortByAscendingDate(tasks, taskCount);
+                displayTasks(tasks, taskCount);
+                }
+
+            break;   
+
+            case 8:
+                if (taskCount == 0) {
+                    printf("    No tasks available.\n");
+                } else {
+                SortByDescendingDate(tasks, taskCount);
+                 displayTasks(tasks, taskCount);
+
+                }
+                break;
+            case 9:
                 printf("\n    Good Bye!!! \n");
                 break;
             default:
                 printf("\n    Invalid choice, please try again.\n");
         }
-    } while (doo != 7);
+    } while (doo != 9);
 
     return 0;
 }
