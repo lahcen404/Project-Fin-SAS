@@ -1,15 +1,14 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 // structure deadline
-typedef struct { 
+typedef struct {
     int day;
     int month;
     int year;
 } Deadline;
 
 // structure task
-typedef struct { 
+typedef struct {
     char title[50];
     char description[200];
     Deadline deadline;
@@ -26,10 +25,10 @@ int addTask(Task tasks[], int taskCount) {
     Task newTask;   // Create a new task variable
 
     printf("     Enter task title: ");
-    scanf(" %[^\n]", &newTask.title);
+    scanf(" %[^\n]", newTask.title);
 
     printf("     Enter task description: ");
-    scanf(" %[^\n]", &newTask.description);
+    scanf(" %[^\n]", newTask.description);
 
     // Input valid day
     do {
@@ -61,8 +60,13 @@ int addTask(Task tasks[], int taskCount) {
         }
     } while (newTask.deadline.year < 2024);
 
+    do {
     printf("     Enter priority (0 for low, 1 for high): ");
     scanf("%d", &newTask.priority);
+    if (newTask.priority > 1 || newTask.priority<0) {
+            printf("     Invalid Priority. Enter ('0 for low' or '1 for high') \n");
+        }
+} while (newTask.priority > 1 || newTask.priority<0);
 
     newTask.status = 0; // Initialize status to 0 = incomplete
 
@@ -130,7 +134,7 @@ void ModifyTasks(Task tasks[], int taskCount) {
         }
     } while (tasks[index].deadline.day < 1 || tasks[index].deadline.day > 31);
 
-    
+
     do {
         printf("     New deadline (Month): ");
         scanf("%d", &tasks[index].deadline.month);
@@ -140,7 +144,7 @@ void ModifyTasks(Task tasks[], int taskCount) {
         }
     } while (tasks[index].deadline.month < 1 || tasks[index].deadline.month > 12);
 
-    
+
     do {
         printf("     New deadline (Year): ");
         scanf("%d", &tasks[index].deadline.year);
@@ -151,12 +155,25 @@ void ModifyTasks(Task tasks[], int taskCount) {
     } while (tasks[index].deadline.year < 2024); //Repeated loop as long as the years less than 2024
                 break;
             case 4:
+
+                do {
                 printf("    New Priority (0 for Low | 1 for High): ");
                 scanf("%d", &tasks[index].priority);
+                            //check valid priority
+    if (tasks[index].priority > 1 || tasks[index].priority<0) {
+            printf("     Invalid Priority. Enter ('0 for low' or '1 for high') \n");
+        }
+} while (tasks[index].priority > 1 || tasks[index].priority<0);
                 break;
             case 5:
+                do{
                 printf("    New Status (0 for Incomplete | 1 for Complete): ");
                 scanf("%d", &tasks[index].status);
+                //check valid status
+                if (tasks[index].status>1 || tasks[index].status<0){
+                    printf("Invalid Status. Entre (0 for Incomplete | 1 for Complete)\n");
+                }
+                }while(tasks[index].status>1 || tasks[index].status<0);
                 break;
             case 6:
                 printf("\n    Modification completed!\n");
@@ -176,7 +193,7 @@ int DeleteTasks(Task tasks[], int index, int taskCount) {
     return taskCount;
 }
 
-// Function Filter by priority 
+// Function Filter by priority
 void filterByPriority(Task tasks[], int taskCount, int WPriority) {
     int found = 0;
 
@@ -198,7 +215,7 @@ void filterByPriority(Task tasks[], int taskCount, int WPriority) {
     }
 }
 
-// Function Filter by status 
+// Function Filter by status
 void filterByStatus(Task tasks[], int taskCount, int WStatus) {
     int found = 0;
 
@@ -222,7 +239,7 @@ void filterByStatus(Task tasks[], int taskCount, int WStatus) {
 
 // Function Save Tasks to file.txt
 void saveTasksToFile(Task tasks[], int taskCount) {
-    FILE *file = fopen("Tasks.txt", "w"); 
+    FILE *file = fopen("Tasks.txt", "w");
 
     for (int i = 0; i < taskCount; i++) {
         fprintf(file, "---------------Task %d-------------\n",i+1);
@@ -234,60 +251,50 @@ void saveTasksToFile(Task tasks[], int taskCount) {
         fprintf(file, "-----------------------------------\n");
     }
 
-    fclose(file); 
+    fclose(file);
     printf("Tasks saved Successfully !!\n");
 }
 
-void SortByAscendingDate(Task tasks[], int taskCount)
-{
-    for (int i = 0; i < taskCount; i++)           //sorting tasks (ascending)
-    {
-        int indexMin = i; // 0
-        for (int j = i + 1; j < taskCount; j++) // 2
-        {
-            if (tasks[indexMin].deadline.year > tasks[j].deadline.year ||
-                tasks[indexMin].deadline.year == tasks[j].deadline.year && 
-                tasks[indexMin].deadline.month > tasks[j].deadline.month ||
-                tasks[indexMin].deadline.month == tasks[j].deadline.month && 
-                tasks[indexMin].deadline.day > tasks[j].deadline.day)
-            {
-                indexMin = j;
-            } 
-            Task temp = tasks[indexMin];
-            tasks[indexMin] = tasks[i];
-            tasks[i] = temp;
+void SortByAscendingDate(Task tasks[], int taskCount) {
+    for (int i = 0; i < taskCount - 1; i++) {
+        for (int j = i + 1; j < taskCount; j++) {
+            if (tasks[i].deadline.year > tasks[j].deadline.year ||
+                (tasks[i].deadline.year == tasks[j].deadline.year &&
+                 tasks[i].deadline.month > tasks[j].deadline.month) ||
+                (tasks[i].deadline.year == tasks[j].deadline.year &&
+                 tasks[i].deadline.month == tasks[j].deadline.month &&
+                 tasks[i].deadline.day > tasks[j].deadline.day)) {
+                // Swap the tasks
+                Task temp = tasks[i];
+                tasks[i] = tasks[j];
+                tasks[j] = temp;
+            }
         }
     }
-
-    printf("Tasks ordered by ascending date\n");
+    printf("Tasks ordered by Ascending date\n");
     printf("--------------------------------------------\n");
 }
 
-
-void SortByDescendingDate(Task tasks[], int taskCount)
-{
-    for (int i = 0; i < taskCount; i++)           //sorting tasks (Descending)
-    {
-        int indexMin = i; 
-        for (int j = i + 1; j < taskCount; j++) 
-        {
-            if (tasks[indexMin].deadline.year < tasks[j].deadline.year ||
-                tasks[indexMin].deadline.year == tasks[j].deadline.year && 
-                tasks[indexMin].deadline.month < tasks[j].deadline.month ||
-                tasks[indexMin].deadline.month == tasks[j].deadline.month && 
-                tasks[indexMin].deadline.day < tasks[j].deadline.day)
-            {
-                indexMin = j;
-            } 
-            Task temp = tasks[indexMin];
-            tasks[indexMin] = tasks[i];
-            tasks[i] = temp;
+void SortByDescendingDate(Task tasks[], int taskCount) {
+    for (int i = 0; i < taskCount - 1; i++) {
+        for (int j = i + 1; j < taskCount; j++) {
+            if (tasks[i].deadline.year < tasks[j].deadline.year ||
+                (tasks[i].deadline.year == tasks[j].deadline.year &&
+                 tasks[i].deadline.month < tasks[j].deadline.month) ||
+                (tasks[i].deadline.year == tasks[j].deadline.year &&
+                 tasks[i].deadline.month == tasks[j].deadline.month &&
+                 tasks[i].deadline.day < tasks[j].deadline.day)) {
+                // Swap the tasks
+                Task temp = tasks[i];
+                tasks[i] = tasks[j];
+                tasks[j] = temp;
+            }
         }
     }
-
-    printf("Tasks ordered by ascending date\n");
+    printf("Tasks ordered by Descending date\n");
     printf("--------------------------------------------\n");
 }
+
 
 int main() {
     printf("\n  -----------------------------------  \n ");
@@ -299,6 +306,7 @@ int main() {
     int priority;
     int status;
     int typeFilter;
+    int typeSort;
 
     do {
         //Menu
@@ -309,10 +317,9 @@ int main() {
         printf("    3- Modify Task\n");
         printf("    4- Delete Task\n");
         printf("    5- Filter Task\n");
-        printf("    6- Save Tasks in File.txt \n");
-        printf("    7- Sort By Ascending Deadline \n");
-        printf("    8- Sort By Descending Deadline \n");
-        printf("    9- Quit\n");
+        printf("    6- Save Tasks  \n");
+        printf("    7- Sort Tasks  \n");
+        printf("    8- Quit\n");
         scanf("%d", &doo);
 
         switch (doo) {
@@ -330,10 +337,10 @@ int main() {
                 break;
             case 3:
                 if (taskCount == 0) {
-                    printf("    No tasks available.\n"); 
+                    printf("    No tasks available.\n");
                 } else {
                     ModifyTasks(tasks, taskCount); //Call ModifyTask Function
-                    
+
                 }
                 break;
             case 4:
@@ -344,12 +351,12 @@ int main() {
                     printf("    Entre 0 to cancel deleting \n");
                     printf("\n    Enter the task number to delete (1 to %d): ", taskCount);
                     scanf("%d", &index);
-                    index--;
+                    index--;  // Convert to 0 based index
                     if (index < 0 || index >= taskCount) {
                         printf("\n    Invalid task number!\n");
                     } else {
                         taskCount = DeleteTasks(tasks, index, taskCount); //Call DeleteTask Function
-                        
+
                         printf("    Task deleted successfully.\n");
                     }
                 }
@@ -384,32 +391,31 @@ int main() {
                 }
                 break;
 
-            case 7:
-                if (taskCount == 0) {
-                    printf("    No tasks available.\n");
-                } else {
-                SortByAscendingDate(tasks, taskCount);
-                displayTasks(tasks, taskCount);
-                }
+               case 7:
+                printf("\n    1- Sort By Ascending Deadline\n");
+                    printf("    2- Sort By Descending Deadline\n");
+                    printf("    Enter your choice: ");
+                    scanf("%d", &typeSort);
 
-            break;   
+                    if (typeSort == 1) {
 
+                        SortByAscendingDate(tasks, taskCount); //Call SortByAscendingDate function
+                        displayTasks(tasks, taskCount);
+                    } else if (typeSort == 2) {
+
+                        SortByDescendingDate(tasks, taskCount); //Call SortByDescendingDate function
+                        displayTasks(tasks, taskCount);
+                    } else {
+                        printf("    Invalid Sort type.\n");
+                    }
+               break;
             case 8:
-                if (taskCount == 0) {
-                    printf("    No tasks available.\n");
-                } else {
-                SortByDescendingDate(tasks, taskCount);
-                 displayTasks(tasks, taskCount);
-
-                }
-                break;
-            case 9:
                 printf("\n    Good Bye!!! \n");
                 break;
             default:
                 printf("\n    Invalid choice, please try again.\n");
         }
-    } while (doo != 9);
+    } while (doo != 8);
 
     return 0;
 }
